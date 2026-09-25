@@ -13,7 +13,7 @@
 * Lenguaje: Java
 * IDE recomendado: Eclipse
 
-#Instrucciones de Ejecución
+# Instrucciones de Ejecución
 * Clona o descarga este repositorio/carpeta.
 * Abre el proyecto en tu IDE.
 * Asegúrate de que el archivo de texto `Almunos.txt y Solicitudes.txt`  esté descargado y ubicado en la misma carpeta que el codigo.
