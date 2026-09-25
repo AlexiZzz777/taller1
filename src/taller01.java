@@ -109,7 +109,7 @@ public class taller01 {
 
         //Cargar Alumnos.txt
         try {
-            File fAlumnos = new File("Alumnos.txt");
+            File fAlumnos = new File("src/txt/Alumnos.txt");
             if (fAlumnos.exists()) {
                 Scanner sAl = new Scanner(fAlumnos);
                 while (sAl.hasNextLine()) {
@@ -136,7 +136,7 @@ public class taller01 {
         }
         //Cargar Solicitudes.txt
         try {
-            File fSol = new File("Solicitudes.txt");
+            File fSol = new File("src/txt/Solicitudes.txt");
             if (fSol.exists()) {
                 Scanner sSol = new Scanner(fSol);
                 while (sSol.hasNextLine()) {
