@@ -1,6 +1,6 @@
 // Diego Cortes - 22.376.295-6 - ICCI
 
-package Taller;
+
 
 import java.io.File;
 import java.io.FileWriter;
