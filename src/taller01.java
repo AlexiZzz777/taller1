@@ -1,6 +1,5 @@
 // Diego Cortes - 22.376.295-6 - ICCI
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -9,29 +8,29 @@ import java.util.Scanner;
 
 public class taller01 {
 
-    //Capacidad maxima de los vectores
+    // Capacidad maxima de los vectores
     static int MAX = 100;
     
-    //Vectores Paralelos de Alumnos
+    // Vectores Paralelos de Alumnos
     static String[] alNombres = new String[MAX];
     static String[] alApellidos = new String[MAX];
     static String[] alRuts = new String[MAX];
     static String[] alParalelos = new String[MAX];
 
-    //Vectores Paralelos de Solicitudes
+    // Vectores Paralelos de Solicitudes
     static String[] solNombres = new String[MAX];
     static String[] solApellidos = new String[MAX];
 
-    //Vectores Paralelos de Admitidos al Grupo
+    // Vectores Paralelos de Admitidos al Grupo
     static String[] admNombres = new String[MAX];
     static String[] admApellidos = new String[MAX];
     static String[] admRuts = new String[MAX];
     static String[] admParalelos = new String[MAX];
 
-    //Vector de Rechazados
+    // Vector de Rechazados
     static String[] rechazadosTextos = new String[MAX];
 
-    //Variables globales para estadisticas y control de versiones
+    // Variables globales para estadisticas y control de versiones
     static int totalIntentos = 0;
     static int versC1 = 1;
     static int versC2 = 1;
@@ -58,68 +57,70 @@ public class taller01 {
 
             try {
                 opcion = Integer.parseInt(input);
+                
+                // El switch ahora se ejecuta solo si el numero es valido, eliminando el "continue"
+                switch (opcion) {
+                    case 1:
+                        cargarArchivos();
+                        break;
+                    case 2:
+                        if (archivosCargados) procesarSolicitudes();
+                        else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
+                        break;
+                    case 3:
+                        if (archivosCargados) menuInscripcionManual();
+                        else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
+                        break;
+                    case 4:
+                        if (archivosCargados) menuAdministracion();
+                        else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
+                        break;
+                    case 5:
+                        if (archivosCargados) menuReportes();
+                        else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
+                        break;
+                    case 6:
+                        if (archivosCargados) mostrarEstadisticas();
+                        else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
+                        break;
+                    case 7:
+                        salir = true;
+                        System.out.println("Saliendo del sistema...");
+                        break;
+                    default:
+                        System.out.println("-> Error: Opcion fuera de rango (1-7).");
+                }
             } catch (Exception e) {
                 System.out.println("-> Error: Debe ingresar un numero valido.");
-                continue;
-            }
-
-            switch (opcion) {
-                case 1:
-                    cargarArchivos();
-                    break;
-                case 2:
-                    if (archivosCargados) procesarSolicitudes();
-                    else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
-                    break;
-                case 3:
-                    if (archivosCargados) menuInscripcionManual();
-                    else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
-                    break;
-                case 4:
-                    if (archivosCargados) menuAdministracion();
-                    else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
-                    break;
-                case 5:
-                    if (archivosCargados) menuReportes();
-                    else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
-                    break;
-                case 6:
-                    if (archivosCargados) mostrarEstadisticas();
-                    else System.out.println("-> Error: Debe cargar los archivos primero (Opcion 1).");
-                    break;
-                case 7:
-                    salir = true;
-                    System.out.println("Saliendo del sistema...");
-                    break;
-                default:
-                    System.out.println("-> Error: Opcion fuera de rango (1-7).");
             }
         }
     }
 
 
-    //CARGAR ARCHIVOS
+    // CARGAR ARCHIVOS
     public static void cargarArchivos() {
         int cantAl = 0;
         int cantSol = 0;
 
-        //Cargar Alumnos.txt
+        // Cargar Alumnos.txt
         try {
             File fAlumnos = new File("src/txt/Alumnos.txt");
             if (fAlumnos.exists()) {
                 Scanner sAl = new Scanner(fAlumnos);
                 while (sAl.hasNextLine()) {
                     String linea = sAl.nextLine().trim();
-                    if (linea.isEmpty()) continue;
-                    String[] partes = linea.split(";");
-                    if (partes.length == 4) {
-                        int pos = buscarEspacioVacio(alNombres);
-                        if (pos != -1) {
-                            alNombres[pos] = partes[0].trim();
-                            alApellidos[pos] = partes[1].trim();
-                            alRuts[pos] = partes[2].trim();
-                            alParalelos[pos] = partes[3].trim();
-                            cantAl++;
+                    // Se reemplazo el continue por una condicion if que verifica si la linea NO esta vacia
+                    if (!linea.isEmpty()) {
+                        String[] partes = linea.split(";");
+                        if (partes.length == 4) {
+                            int pos = buscarEspacioVacio(alNombres);
+                            if (pos != -1) {
+                                alNombres[pos] = partes[0].trim();
+                                alApellidos[pos] = partes[1].trim();
+                                alRuts[pos] = partes[2].trim();
+                                alParalelos[pos] = partes[3].trim();
+                                cantAl++;
+                            }
                         }
                     }
                 }
@@ -130,21 +131,24 @@ public class taller01 {
         } catch (IOException e) {
             System.out.println("-> Error leyendo Alumnos.txt: " + e.getMessage());
         }
-        //Cargar Solicitudes.txt
+        
+        // Cargar Solicitudes.txt
         try {
             File fSol = new File("src/txt/Solicitudes.txt");
             if (fSol.exists()) {
                 Scanner sSol = new Scanner(fSol);
                 while (sSol.hasNextLine()) {
                     String linea = sSol.nextLine().trim();
-                    if (linea.isEmpty()) continue;
-                    String[] partes = linea.split("-");
-                    if (partes.length == 2) {
-                        int pos = buscarEspacioVacio(solNombres);
-                        if (pos != -1) {
-                            solNombres[pos] = partes[0].trim();
-                            solApellidos[pos] = partes[1].trim();
-                            cantSol++;
+                    // Se reemplazo el continue por una condicion if
+                    if (!linea.isEmpty()) {
+                        String[] partes = linea.split("-");
+                        if (partes.length == 2) {
+                            int pos = buscarEspacioVacio(solNombres);
+                            if (pos != -1) {
+                                solNombres[pos] = partes[0].trim();
+                                solApellidos[pos] = partes[1].trim();
+                                cantSol++;
+                            }
                         }
                     }
                 }
@@ -161,7 +165,8 @@ public class taller01 {
         System.out.println("- " + cantAl + " alumnos en la lista.");
         System.out.println("- " + cantSol + " solicitudes de ingreso.");
     }
-    //PROCESAR SOLICITUDES
+    
+    // PROCESAR SOLICITUDES
     public static void procesarSolicitudes() {
         System.out.println("Procesando solicitudes...");
         int admitidosHoy = 0, rechazadosHoy = 0;
@@ -174,7 +179,7 @@ public class taller01 {
 
                 int idxAlumno = buscarAlumnoPorNombre(nombreSol, apellidoSol);
 
-                if (idxAlumno != -1) { //Existe en la lista
+                if (idxAlumno != -1) { // Existe en la lista
                     String rut = alRuts[idxAlumno];
                     if (!estaAdmitido(rut)) {
                         agregarAdmitido(idxAlumno);
@@ -183,12 +188,12 @@ public class taller01 {
                     } else {
                         System.out.println("[DUPLICADO] " + nombreSol + " " + apellidoSol + " ya estaba en el grupo.");
                     }
-                } else { //No existe
+                } else { // No existe
                     agregarRechazado(nombreSol + " " + apellidoSol + " - No pertenece a ningun paralelo del curso");
                     System.out.println("[RECHAZO]  " + nombreSol + " " + apellidoSol + " -> no pertenece a ningun paralelo");
                     rechazadosHoy++;
                 }
-                //Borrar la solicitud una vez procesada
+                // Borrar la solicitud una vez procesada
                 solNombres[i] = null;
                 solApellidos[i] = null;
             }
@@ -196,7 +201,7 @@ public class taller01 {
         System.out.println("\nResumen: " + admitidosHoy + " admitidos / " + rechazadosHoy + " rechazados.");
     }
 
-    //INSCRIPCION MANUAL
+    // INSCRIPCION MANUAL
     public static void menuInscripcionManual() {
         System.out.println("\nComo desea inscribir a la persona?");
         System.out.println("1) Por nombre completo");
@@ -247,7 +252,7 @@ public class taller01 {
         }
     }
 
-    //ADMINISTRACION DEL CURSO
+    // ADMINISTRACION DEL CURSO
     public static void menuAdministracion() {
         System.out.println("\n--- Administracion del curso ---");
         System.out.println("1) Cambiar paralelo de un alumno");
@@ -268,7 +273,7 @@ public class taller01 {
                 String nuevoPara = scanner.nextLine().trim().toUpperCase();
                 if (nuevoPara.equals("C1") || nuevoPara.equals("C2")) {
                     alParalelos[idx] = nuevoPara;
-                    //Actualizar si esta en el grupo
+                    // Actualizar si esta en el grupo
                     for (int i = 0; i < MAX; i++) {
                         if (admRuts[i] != null && admRuts[i].equalsIgnoreCase(rut)) {
                             admParalelos[i] = nuevoPara;
@@ -293,7 +298,7 @@ public class taller01 {
                 alRuts[idx] = null;
                 alParalelos[idx] = null;
 
-                //Sacar del grupo si estaba
+                // Sacar del grupo si estaba
                 for (int i = 0; i < MAX; i++) {
                     if (admRuts[i] != null && admRuts[i].equalsIgnoreCase(rut)) {
                         admNombres[i] = null;
@@ -357,7 +362,7 @@ public class taller01 {
         }
     }
 
-    //GENERAR REPORTES
+    // GENERAR REPORTES
     public static void menuReportes() {
         File dir = new File("Reportes");
         if (!dir.exists()) {
@@ -417,7 +422,8 @@ public class taller01 {
             System.out.println("-> Error al escribir el reporte: " + e.getMessage());
         }
     }
-    //ANALISIS ESTADISTICO
+    
+    // ANALISIS ESTADISTICO
     public static void mostrarEstadisticas() {
         int cantRechazados = 0;
         for (int i = 0; i < MAX; i++) {
@@ -448,14 +454,14 @@ public class taller01 {
         System.out.printf("Tasa de admision: %.1f%%\n", tasaAdmision);
     }
 
-    //metodos aux
+    // METODOS AUXILIARES
     public static int buscarEspacioVacio(String[] arreglo) {
         for (int i = 0; i < MAX; i++) {
             if (arreglo[i] == null) {
                 return i;
             }
         }
-        return -1; //No hay espacio
+        return -1; // No hay espacio
     }
 
     public static int buscarAlumnoPorNombre(String nom, String ape) {
