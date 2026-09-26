@@ -1,5 +1,6 @@
 // Diego Cortes - 22.376.295-6 - ICCI
 
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -8,29 +9,29 @@ import java.util.Scanner;
 
 public class taller01 {
 
-    // Capacidad maxima de los vectores
+    //Capacidad maxima de los vectores
     static int MAX = 100;
     
-    // Vectores Paralelos de Alumnos
+    //Vectores Paralelos de Alumnos
     static String[] alNombres = new String[MAX];
     static String[] alApellidos = new String[MAX];
     static String[] alRuts = new String[MAX];
     static String[] alParalelos = new String[MAX];
 
-    // Vectores Paralelos de Solicitudes
+    //Vectores Paralelos de Solicitudes
     static String[] solNombres = new String[MAX];
     static String[] solApellidos = new String[MAX];
 
-    // Vectores Paralelos de Admitidos al Grupo
+    //Vectores Paralelos de Admitidos al Grupo
     static String[] admNombres = new String[MAX];
     static String[] admApellidos = new String[MAX];
     static String[] admRuts = new String[MAX];
     static String[] admParalelos = new String[MAX];
 
-    // Vector de Rechazados
+    //Vector de Rechazados
     static String[] rechazadosTextos = new String[MAX];
 
-    // Variables globales para estadisticas y control de versiones
+    //Variables globales para estadisticas y control de versiones
     static int totalIntentos = 0;
     static int versC1 = 1;
     static int versC2 = 1;
@@ -42,7 +43,7 @@ public class taller01 {
         boolean salir = false;
 
         while (!salir) {
-            System.out.println("===== Sistema de Control del Grupo POO =====");
+            System.out.println("\n===== Sistema de Control del Grupo POO =====");
             System.out.println("1) Cargar archivos (Alumnos y Solicitudes)");
             System.out.println("2) Procesar solicitudes (Filtrado automatico)");
             System.out.println("3) Inscripcion manual al grupo");
@@ -55,10 +56,14 @@ public class taller01 {
             String input = scanner.nextLine().trim();
             int opcion = -1;
 
-            try {
-                opcion = Integer.parseInt(input);
-                
-                // El switch ahora se ejecuta solo si el numero es valido, eliminando el "continue"
+            if (!input.isEmpty()) {
+                try {
+                    opcion = Integer.parseInt(input);
+                } catch (Exception e) {
+                }
+            }
+
+            if (opcion >= 1 && opcion <= 7) {
                 switch (opcion) {
                     case 1:
                         cargarArchivos();
@@ -87,29 +92,24 @@ public class taller01 {
                         salir = true;
                         System.out.println("Saliendo del sistema...");
                         break;
-                    default:
-                        System.out.println("-> Error: Opcion fuera de rango (1-7).");
                 }
-            } catch (Exception e) {
-                System.out.println("-> Error: Debe ingresar un numero valido.");
+            } else {
+                System.out.println("-> Error: Opcion invalida. Debe ingresar un numero entre 1 y 7.");
             }
         }
     }
-
-
-    // CARGAR ARCHIVOS
+    //cargar arch
     public static void cargarArchivos() {
         int cantAl = 0;
         int cantSol = 0;
 
-        // Cargar Alumnos.txt
+        //Cargar Alumnos.txt
         try {
             File fAlumnos = new File("src/txt/Alumnos.txt");
             if (fAlumnos.exists()) {
                 Scanner sAl = new Scanner(fAlumnos);
                 while (sAl.hasNextLine()) {
                     String linea = sAl.nextLine().trim();
-                    // Se reemplazo el continue por una condicion if que verifica si la linea NO esta vacia
                     if (!linea.isEmpty()) {
                         String[] partes = linea.split(";");
                         if (partes.length == 4) {
@@ -118,8 +118,10 @@ public class taller01 {
                                 alNombres[pos] = partes[0].trim();
                                 alApellidos[pos] = partes[1].trim();
                                 alRuts[pos] = partes[2].trim();
-                                alParalelos[pos] = partes[3].trim();
+                                alParalelos[pos] = partes[3].trim().toUpperCase();
                                 cantAl++;
+                            } else {
+                                System.out.println("-> Error: Capacidad maxima de alumnos alcanzada.");
                             }
                         }
                     }
@@ -131,15 +133,13 @@ public class taller01 {
         } catch (IOException e) {
             System.out.println("-> Error leyendo Alumnos.txt: " + e.getMessage());
         }
-        
-        // Cargar Solicitudes.txt
+        //Cargar Solicitudes.txt
         try {
             File fSol = new File("src/txt/Solicitudes.txt");
             if (fSol.exists()) {
                 Scanner sSol = new Scanner(fSol);
                 while (sSol.hasNextLine()) {
                     String linea = sSol.nextLine().trim();
-                    // Se reemplazo el continue por una condicion if
                     if (!linea.isEmpty()) {
                         String[] partes = linea.split("-");
                         if (partes.length == 2) {
@@ -148,6 +148,8 @@ public class taller01 {
                                 solNombres[pos] = partes[0].trim();
                                 solApellidos[pos] = partes[1].trim();
                                 cantSol++;
+                            } else {
+                                System.out.println("-> Error: Capacidad maxima de solicitudes alcanzada.");
                             }
                         }
                     }
@@ -165,8 +167,7 @@ public class taller01 {
         System.out.println("- " + cantAl + " alumnos en la lista.");
         System.out.println("- " + cantSol + " solicitudes de ingreso.");
     }
-    
-    // PROCESAR SOLICITUDES
+    //solicitudes
     public static void procesarSolicitudes() {
         System.out.println("Procesando solicitudes...");
         int admitidosHoy = 0, rechazadosHoy = 0;
@@ -179,7 +180,7 @@ public class taller01 {
 
                 int idxAlumno = buscarAlumnoPorNombre(nombreSol, apellidoSol);
 
-                if (idxAlumno != -1) { // Existe en la lista
+                if (idxAlumno != -1) { //Existe en la lista
                     String rut = alRuts[idxAlumno];
                     if (!estaAdmitido(rut)) {
                         agregarAdmitido(idxAlumno);
@@ -188,12 +189,12 @@ public class taller01 {
                     } else {
                         System.out.println("[DUPLICADO] " + nombreSol + " " + apellidoSol + " ya estaba en el grupo.");
                     }
-                } else { // No existe
+                } else { //No existe
                     agregarRechazado(nombreSol + " " + apellidoSol + " - No pertenece a ningun paralelo del curso");
                     System.out.println("[RECHAZO]  " + nombreSol + " " + apellidoSol + " -> no pertenece a ningun paralelo");
                     rechazadosHoy++;
                 }
-                // Borrar la solicitud una vez procesada
+                //Borrar la solicitud
                 solNombres[i] = null;
                 solApellidos[i] = null;
             }
@@ -201,7 +202,7 @@ public class taller01 {
         System.out.println("\nResumen: " + admitidosHoy + " admitidos / " + rechazadosHoy + " rechazados.");
     }
 
-    // INSCRIPCION MANUAL
+    //inscripcion manual 
     public static void menuInscripcionManual() {
         System.out.println("\nComo desea inscribir a la persona?");
         System.out.println("1) Por nombre completo");
@@ -216,43 +217,51 @@ public class taller01 {
             System.out.print("Ingrese Apellido: ");
             String ape = scanner.nextLine().trim();
 
-            totalIntentos++;
-            int idx = buscarAlumnoPorNombre(nom, ape);
-            if (idx != -1) {
-                if (!estaAdmitido(alRuts[idx])) {
-                    agregarAdmitido(idx);
-                    System.out.println("Inscrito exitosamente en " + alParalelos[idx]);
+            if (!nom.isEmpty() && !ape.isEmpty()) {
+                totalIntentos++;
+                int idx = buscarAlumnoPorNombre(nom, ape);
+                if (idx != -1) {
+                    if (!estaAdmitido(alRuts[idx])) {
+                        agregarAdmitido(idx);
+                        System.out.println("Inscrito exitosamente en " + alParalelos[idx]);
+                    } else {
+                        System.out.println("El alumno ya estaba en el grupo.");
+                    }
                 } else {
-                    System.out.println("El alumno ya estaba en el grupo.");
+                    agregarRechazado(nom + " " + ape + " - No pertenece a ningun paralelo del curso");
+                    System.out.println("No pertenece a la lista oficial. Registrado en rechazados.");
                 }
             } else {
-                agregarRechazado(nom + " " + ape + " - No pertenece a ningun paralelo del curso");
-                System.out.println("No pertenece a la lista oficial. Registrado en rechazados.");
+                System.out.println("-> Error: Los campos no pueden estar vacios.");
             }
         } else if (input.equals("2")) {
             System.out.print("Ingrese RUT: ");
             String rut = scanner.nextLine().trim();
 
-            totalIntentos++;
-            int idx = buscarAlumnoPorRut(rut);
-            if (idx != -1) {
-                if (!estaAdmitido(rut)) {
-                    agregarAdmitido(idx);
-                    System.out.println("Inscrito exitosamente en " + alParalelos[idx]);
+            if (!rut.isEmpty()) {
+                totalIntentos++;
+                int idx = buscarAlumnoPorRut(rut);
+                if (idx != -1) {
+                    if (!estaAdmitido(rut)) {
+                        agregarAdmitido(idx);
+                        System.out.println("Inscrito exitosamente en " + alParalelos[idx]);
+                    } else {
+                        System.out.println("El alumno ya estaba en el grupo.");
+                    }
                 } else {
-                    System.out.println("El alumno ya estaba en el grupo.");
+                    agregarRechazado("Sin nombre registrado, RUT: " + rut);
+                    System.out.println("El RUT " + rut + " no pertenece a ningun paralelo del curso.");
+                    System.out.println("No tenemos su nombre, por lo que se registrara solo el RUT en los rechazados.");
                 }
             } else {
-                agregarRechazado("Sin nombre registrado, RUT: " + rut);
-                System.out.println("El RUT " + rut + " no pertenece a ningun paralelo del curso.");
-                System.out.println("No tenemos su nombre, por lo que se registrara solo el RUT en los rechazados.");
+                System.out.println("-> Error: El RUT no puede estar vacio.");
             }
         } else if (!input.equals("3")) {
             System.out.println("-> Error: Opcion invalida.");
         }
     }
 
-    // ADMINISTRACION DEL CURSO
+    //admi del curso
     public static void menuAdministracion() {
         System.out.println("\n--- Administracion del curso ---");
         System.out.println("1) Cambiar paralelo de un alumno");
@@ -271,9 +280,10 @@ public class taller01 {
                 System.out.println("Alumno: " + alNombres[idx] + " " + alApellidos[idx] + " (actualmente en " + alParalelos[idx] + ")");
                 System.out.print("Nuevo paralelo (C1/C2): ");
                 String nuevoPara = scanner.nextLine().trim().toUpperCase();
+                
                 if (nuevoPara.equals("C1") || nuevoPara.equals("C2")) {
                     alParalelos[idx] = nuevoPara;
-                    // Actualizar si esta en el grupo
+                    //Actualizar si esta en el grupo
                     for (int i = 0; i < MAX; i++) {
                         if (admRuts[i] != null && admRuts[i].equalsIgnoreCase(rut)) {
                             admParalelos[i] = nuevoPara;
@@ -283,7 +293,7 @@ public class taller01 {
                     guardarAlumnosTxt();
                     System.out.println("Paralelo actualizado! Cambios guardados en Alumnos.txt");
                 } else {
-                    System.out.println("-> Error: Paralelo invalido. Solo C1 o C2.");
+                    System.out.println("-> Error: Paralelo invalido. Solo se permite C1 o C2.");
                 }
             } else {
                 System.out.println("-> Error: Alumno no encontrado.");
@@ -298,7 +308,7 @@ public class taller01 {
                 alRuts[idx] = null;
                 alParalelos[idx] = null;
 
-                // Sacar del grupo si estaba
+                //Sacar del grupo si estaba
                 for (int i = 0; i < MAX; i++) {
                     if (admRuts[i] != null && admRuts[i].equalsIgnoreCase(rut)) {
                         admNombres[i] = null;
@@ -325,8 +335,8 @@ public class taller01 {
                 System.out.print("Ingrese Paralelo (C1/C2): ");
                 String par = scanner.nextLine().trim().toUpperCase();
 
-                if ((par.equals("C1") || par.equals("C2")) && !nom.isEmpty() && !rut.isEmpty()) {
-                    if (buscarAlumnoPorRut(rut) == -1) { // No debe existir ya
+                if (!nom.isEmpty() && !ape.isEmpty() && !rut.isEmpty() && (par.equals("C1") || par.equals("C2"))) {
+                    if (buscarAlumnoPorRut(rut) == -1) {
                         alNombres[pos] = nom;
                         alApellidos[pos] = ape;
                         alRuts[pos] = rut;
@@ -337,7 +347,7 @@ public class taller01 {
                         System.out.println("-> Error: El RUT ya existe en el curso.");
                     }
                 } else {
-                    System.out.println("-> Error: Datos invalidos o vacios.");
+                    System.out.println("-> Error: Datos invalidos. Verifique no dejar espacios vacios y usar C1 o C2.");
                 }
             } else {
                 System.out.println("-> Error: Capacidad maxima del curso alcanzada (100).");
@@ -349,7 +359,7 @@ public class taller01 {
 
     public static void guardarAlumnosTxt() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("Alumnos.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter("src/txt/Alumnos.txt"));
             for (int i = 0; i < MAX; i++) {
                 if (alNombres[i] != null) {
                     bw.write(alNombres[i] + ";" + alApellidos[i] + ";" + alRuts[i] + ";" + alParalelos[i]);
@@ -362,7 +372,7 @@ public class taller01 {
         }
     }
 
-    // GENERAR REPORTES
+    //reportes
     public static void menuReportes() {
         File dir = new File("Reportes");
         if (!dir.exists()) {
@@ -422,8 +432,7 @@ public class taller01 {
             System.out.println("-> Error al escribir el reporte: " + e.getMessage());
         }
     }
-    
-    // ANALISIS ESTADISTICO
+    //estadisticas
     public static void mostrarEstadisticas() {
         int cantRechazados = 0;
         for (int i = 0; i < MAX; i++) {
@@ -454,14 +463,14 @@ public class taller01 {
         System.out.printf("Tasa de admision: %.1f%%\n", tasaAdmision);
     }
 
-    // METODOS AUXILIARES
+    //metodos aux
     public static int buscarEspacioVacio(String[] arreglo) {
         for (int i = 0; i < MAX; i++) {
             if (arreglo[i] == null) {
                 return i;
             }
         }
-        return -1; // No hay espacio
+        return -1; //No hay espacio
     }
 
     public static int buscarAlumnoPorNombre(String nom, String ape) {
